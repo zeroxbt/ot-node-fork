@@ -110,7 +110,7 @@ class EpochCheckCommand extends Command {
         maxStake,
     ) {
         const peerRecord = await this.repositoryModuleManager.getPeerRecord(
-            this.networkModuleManager.getPeerId().toB58String(),
+            this.networkModuleManager.getPeerIdString(),
             blockchain,
         );
 

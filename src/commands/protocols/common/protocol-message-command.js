@@ -40,7 +40,7 @@ class ProtocolMessageCommand extends Command {
             this.messageTimeout(),
         );
 
-        this.networkModuleManager.removeCachedSession(operationId, keywordUuid, node.id);
+        await this.networkModuleManager.removeCachedSession(operationId, keywordUuid, node.id);
 
         switch (response.header.messageType) {
             case NETWORK_MESSAGE_TYPES.RESPONSES.BUSY:
@@ -81,7 +81,7 @@ class ProtocolMessageCommand extends Command {
     async recover(command) {
         const { node, operationId, keyword } = command.data;
         const keywordUuid = uuidv5(keyword, uuidv5.URL);
-        this.networkModuleManager.removeCachedSession(operationId, keywordUuid, node.id);
+        await this.networkModuleManager.removeCachedSession(operationId, keywordUuid, node.id);
 
         await this.markResponseAsFailed(command, command.message);
         return Command.empty();

@@ -128,7 +128,7 @@
                     "config": {
                         "port": 9001,
                         "bootstrap": [
-                            "/ip4/0.0.0.0/tcp/9100/p2p/QmWyf3dtqJnhuCpzEDTNmNFYc5tjxTrXhGcUUmGHdg2gtj"
+                            "/ip4/127.0.0.1/tcp/9100/p2p/QmWyf3dtqJnhuCpzEDTNmNFYc5tjxTrXhGcUUmGHdg2gtj"
                         ]
                     }
                 }

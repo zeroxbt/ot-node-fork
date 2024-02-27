@@ -23,15 +23,9 @@ class NetworkModuleManager extends BaseModuleManager {
         }
     }
 
-    getPeers() {
-        if (this.initialized) {
-            return this.getImplementation().module.getPeers();
-        }
-    }
-
     async sendMessage(
         protocol,
-        remotePeerId,
+        peerIdString,
         messageType,
         operationId,
         keywordUuid,
@@ -41,7 +35,7 @@ class NetworkModuleManager extends BaseModuleManager {
         if (this.initialized) {
             return this.getImplementation().module.sendMessage(
                 protocol,
-                remotePeerId,
+                peerIdString,
                 messageType,
                 operationId,
                 keywordUuid,
@@ -51,11 +45,11 @@ class NetworkModuleManager extends BaseModuleManager {
         }
     }
 
-    async sendMessageResponse(protocol, remotePeerId, messageType, operationId, keyword, message) {
+    async sendMessageResponse(protocol, peerIdString, messageType, operationId, keyword, message) {
         if (this.initialized) {
             return this.getImplementation().module.sendMessageResponse(
                 protocol,
-                remotePeerId,
+                peerIdString,
                 messageType,
                 operationId,
                 keyword,
@@ -76,36 +70,42 @@ class NetworkModuleManager extends BaseModuleManager {
         }
     }
 
+    getPeerIdString() {
+        if (this.initialized) {
+            return this.getImplementation().module.getPeerIdString();
+        }
+    }
+
     async healthCheck() {
         if (this.initialized) {
             return this.getImplementation().module.healthCheck();
         }
     }
 
-    async findPeer(peerId) {
+    async findPeer(peerIdString) {
         if (this.initialized) {
-            return this.getImplementation().module.findPeer(peerId);
+            return this.getImplementation().module.findPeer(peerIdString);
         }
     }
 
-    async dial(peerId) {
+    async dial(peerIdString) {
         if (this.initialized) {
-            return this.getImplementation().module.dial(peerId);
+            return this.getImplementation().module.dial(peerIdString);
         }
     }
 
-    async getPeerInfo(peerId) {
+    async getPeerInfo(peerIdString) {
         if (this.initialized) {
-            return this.getImplementation().module.getPeerInfo(peerId);
+            return this.getImplementation().module.getPeerInfo(peerIdString);
         }
     }
 
-    removeCachedSession(operationId, keywordUuid, remotePeerId) {
+    async removeCachedSession(operationId, keywordUuid, peerIdString) {
         if (this.initialized) {
-            this.getImplementation().module.removeCachedSession(
+            await this.getImplementation().module.removeCachedSession(
                 operationId,
                 keywordUuid,
-                remotePeerId,
+                peerIdString,
             );
         }
     }

@@ -23,15 +23,14 @@ class ShardingTableService {
             .map((blockchainId) => this.pullBlockchainShardingTable(blockchainId));
         await Promise.all(pullBlockchainShardingTables);
 
-        await this.networkModuleManager.onPeerConnected((connection) => {
+        await this.networkModuleManager.onPeerConnected((event) => {
+            const remotePeerId = event.detail;
             this.logger.trace(
-                `Node connected to ${connection.remotePeer.toB58String()}, updating sharding table last seen and last dialed.`,
+                `Node connected to ${remotePeerId.toString()}, updating sharding table last seen and last dialed.`,
             );
-            this.updatePeerRecordLastSeenAndLastDialed(connection.remotePeer.toB58String()).catch(
-                (error) => {
-                    this.logger.warn(`Unable to update connected peer, error: ${error.message}`);
-                },
-            );
+            this.updatePeerRecordLastSeenAndLastDialed(remotePeerId.toString()).catch((error) => {
+                this.logger.warn(`Unable to update connected peer, error: ${error.message}`);
+            });
         });
     }
 
@@ -185,7 +184,7 @@ class ShardingTableService {
         );
         const r1 = await this.blockchainModuleManager.getR1(blockchainId);
         // todo remove this line once we implement logic for storing assertion in publish node if it's in neighbourhood
-        const myPeerId = this.networkModuleManager.getPeerId().toB58String();
+        const myPeerId = this.networkModuleManager.getPeerIdString();
         const filteredPeerRecords = peerRecords.filter((peer) => peer.peerId !== myPeerId);
         const sorted = filteredPeerRecords.sort((a, b) => a.ask - b.ask);
 
@@ -215,7 +214,7 @@ class ShardingTableService {
         const { addresses } = await this.findPeerAddressAndProtocols(peerId);
         if (addresses.length) {
             try {
-                if (peerId !== this.networkModuleManager.getPeerId().toB58String()) {
+                if (peerId !== this.networkModuleManager.getPeerIdString()) {
                     this.logger.trace(`Dialing peer ${peerId}.`);
                     await this.networkModuleManager.dial(peerId);
                 }
@@ -235,23 +234,24 @@ class ShardingTableService {
 
         if (!this.memoryCachedPeerIds[peerId]) {
             this.memoryCachedPeerIds[peerId] = {
-                lastUpdated: 0,
                 lastDialed: 0,
                 lastSeen: 0,
             };
         }
-        if (this.memoryCachedPeerIds[peerId].lastUpdated < timestampThreshold) {
+        if (
+            this.memoryCachedPeerIds[peerId].lastSeen < timestampThreshold ||
+            this.memoryCachedPeerIds[peerId].lastDialed < timestampThreshold
+        ) {
             const [rowsUpdated] =
                 await this.repositoryModuleManager.updatePeerRecordLastSeenAndLastDialed(
                     peerId,
                     now,
                 );
             if (rowsUpdated) {
-                this.memoryCachedPeerIds[peerId].lastUpdated = now;
+                this.memoryCachedPeerIds[peerId].lastDialed = now;
+                this.memoryCachedPeerIds[peerId].lastSeen = now;
             }
         }
-        this.memoryCachedPeerIds[peerId].lastDialed = now;
-        this.memoryCachedPeerIds[peerId].lastSeen = now;
     }
 
     async updatePeerRecordLastDialed(peerId) {
@@ -259,34 +259,39 @@ class ShardingTableService {
         const timestampThreshold = now - PEER_RECORD_UPDATE_DELAY;
         if (!this.memoryCachedPeerIds[peerId]) {
             this.memoryCachedPeerIds[peerId] = {
-                lastUpdated: 0,
                 lastDialed: 0,
                 lastSeen: 0,
             };
         }
-        if (this.memoryCachedPeerIds[peerId].lastUpdated < timestampThreshold) {
+        if (this.memoryCachedPeerIds[peerId].lastDialed < timestampThreshold) {
             const [rowsUpdated] = await this.repositoryModuleManager.updatePeerRecordLastDialed(
                 peerId,
                 now,
             );
             if (rowsUpdated) {
-                this.memoryCachedPeerIds[peerId].lastUpdated = now;
+                this.memoryCachedPeerIds[peerId].lastDialed = now;
             }
         }
-        this.memoryCachedPeerIds[peerId].lastDialed = now;
     }
 
     async findPeerAddressAndProtocols(peerId) {
         this.logger.trace(`Searching for peer ${peerId} multiaddresses in peer store.`);
-        let peerInfo = await this.networkModuleManager.getPeerInfo(peerId);
+        let peerInfo;
+        try {
+            peerInfo = await this.networkModuleManager.getPeerInfo(peerId);
+        } catch (error) {
+            /* empty */
+        }
         if (
             !peerInfo?.addresses?.length &&
-            peerId !== this.networkModuleManager.getPeerId().toB58String()
+            peerId !== this.networkModuleManager.getPeerIdString()
         ) {
             try {
                 this.logger.trace(`Searching for peer ${peerId} multiaddresses on the network.`);
-                await this.networkModuleManager.findPeer(peerId);
-                peerInfo = await this.networkModuleManager.getPeerInfo(peerId);
+                peerInfo = await this.networkModuleManager.findPeer(peerId);
+                if (peerInfo?.multiaddrs) {
+                    peerInfo.addresses = peerInfo.multiaddrs;
+                }
             } catch (error) {
                 this.logger.trace(`Unable to find peer ${peerId}. Error: ${error.message}`);
             }

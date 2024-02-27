@@ -40,20 +40,10 @@
                         "package": "./network/implementation/libp2p-service.js",
                         "config": {
                             "dht": {
-                                "kBucketSize": 20,
-                                "type": "dual"
+                                "kBucketSize": 20
                             },
                             "connectionManager": {
-                                "autoDial": true,
-                                "autoDialInterval": 10e3,
-                                "dialTimeout": 2e3
-                            },
-                            "peerRouting": {
-                                "refreshManager": {
-                                    "enabled": true,
-                                    "interval": 6e5,
-                                    "bootDelay": 2e3
-                                }
+                                "dialTimeout": 5e3
                             },
                             "port": 9100,
                             "bootstrap": []
@@ -207,16 +197,7 @@
                                 "kBucketSize": 20
                             },
                             "connectionManager": {
-                                "autoDial": true,
-                                "autoDialInterval": 10e3,
-                                "dialTimeout": 2e3
-                            },
-                            "peerRouting": {
-                                "refreshManager": {
-                                    "enabled": true,
-                                    "interval": 6e5,
-                                    "bootDelay": 2e3
-                                }
+                                "dialTimeout": 5e3
                             },
                             "port": 9000,
                             "bootstrap": [
@@ -337,21 +318,11 @@
                     "libp2p-service": {
                         "enabled": true,
                         "package": "./network/implementation/libp2p-service.js",
-                        "config": {
-                            "dht": {
+                        "config": {"dht": {
                                 "kBucketSize": 20
                             },
                             "connectionManager": {
-                                "autoDial": true,
-                                "autoDialInterval": 10e3,
-                                "dialTimeout": 2e3
-                            },
-                            "peerRouting": {
-                                "refreshManager": {
-                                    "enabled": true,
-                                    "interval": 6e5,
-                                    "bootDelay": 2e3
-                                }
+                                "dialTimeout": 5e3
                             },
                             "port": 9000,
                             "bootstrap": [
@@ -503,21 +474,11 @@
                     "libp2p-service": {
                         "enabled": true,
                         "package": "./network/implementation/libp2p-service.js",
-                        "config": {
-                            "dht": {
+                        "config": {"dht": {
                                 "kBucketSize": 20
                             },
                             "connectionManager": {
-                                "autoDial": true,
-                                "autoDialInterval": 10e3,
-                                "dialTimeout": 2e3
-                            },
-                            "peerRouting": {
-                                "refreshManager": {
-                                    "enabled": true,
-                                    "interval": 6e5,
-                                    "bootDelay": 2e3
-                                }
+                                "dialTimeout": 5e3
                             },
                             "port": 9000,
                             "bootstrap": [
@@ -674,16 +635,7 @@
                                 "kBucketSize": 20
                             },
                             "connectionManager": {
-                                "autoDial": true,
-                                "autoDialInterval": 10e3,
-                                "dialTimeout": 2e3
-                            },
-                            "peerRouting": {
-                                "refreshManager": {
-                                    "enabled": true,
-                                    "interval": 6e5,
-                                    "bootDelay": 2e3
-                                }
+                                "dialTimeout": 5e3
                             },
                             "port": 9000,
                             "bootstrap": [

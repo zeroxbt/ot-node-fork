@@ -57,7 +57,7 @@ class SendTelemetryCommand extends Command {
             }
             const nodeData = {
                 version: pjson.version,
-                identity: this.networkModuleManager.getPeerId().toB58String(),
+                identity: this.networkModuleManager.getPeerIdString(),
                 hostname: this.config.hostname,
                 triple_stores: tripleStoreNodeInfo,
                 auto_update_enabled: this.config.modules.autoUpdater.enabled,

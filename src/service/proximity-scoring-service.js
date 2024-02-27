@@ -1,4 +1,5 @@
-import { xor as uint8ArrayXor } from 'uint8arrays/xor';
+// eslint-disable-next-line import/no-unresolved
+import { xor as uint8ArrayXor } from 'uint8arrays';
 import {
     HASH_RING_SIZE,
     UINT40_MAX_BN,

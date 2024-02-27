@@ -38,7 +38,7 @@ class HandleProtocolMessageCommand extends Command {
             await this.handleError(error.message, command);
         }
 
-        this.networkModuleManager.removeCachedSession(operationId, keywordUuid, remotePeerId);
+        await this.networkModuleManager.removeCachedSession(operationId, keywordUuid, remotePeerId);
 
         return Command.empty();
     }
@@ -61,7 +61,7 @@ class HandleProtocolMessageCommand extends Command {
             hashFunctionId,
             proximityScoreFunctionsPairId,
         );
-        const peerId = this.networkModuleManager.getPeerId().toB58String();
+        const peerId = this.networkModuleManager.getPeerIdString();
         for (const { peerId: otherPeerId } of closestNodes) {
             if (otherPeerId === peerId) {
                 return true;
@@ -121,7 +121,7 @@ class HandleProtocolMessageCommand extends Command {
 
         const getAsk = async () => {
             const peerRecord = await this.repositoryModuleManager.getPeerRecord(
-                this.networkModuleManager.getPeerId().toB58String(),
+                this.networkModuleManager.getPeerIdString(),
                 blockchain,
             );
 
@@ -239,7 +239,7 @@ class HandleProtocolMessageCommand extends Command {
             keywordUuid,
             { errorMessage },
         );
-        this.networkModuleManager.removeCachedSession(operationId, keywordUuid, remotePeerId);
+        await this.networkModuleManager.removeCachedSession(operationId, keywordUuid, remotePeerId);
     }
 }
 

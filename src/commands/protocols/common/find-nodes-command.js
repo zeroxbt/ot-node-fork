@@ -40,7 +40,7 @@ class FindNodesCommand extends Command {
             proximityScoreFunctionsPairId,
         );
         for (const node of foundNodes) {
-            if (node.id !== this.networkModuleManager.getPeerId().toB58String()) {
+            if (node.id !== this.networkModuleManager.getPeerIdString()) {
                 closestNodes.push({ id: node.id, protocol: networkProtocols[0] });
             }
         }
